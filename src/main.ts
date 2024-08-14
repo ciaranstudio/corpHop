@@ -30,6 +30,12 @@ light2.shadow.camera.near = 0.5;
 light2.shadow.camera.far = 20;
 scene.add(light2);
 
+const environmentTexture = new THREE.CubeTextureLoader()
+  .setPath("https://sbcode.net/img/")
+  .load(["px.png", "nx.png", "py.png", "ny.png", "pz.png", "nz.png"]);
+scene.environment = environmentTexture;
+scene.background = environmentTexture;
+
 const camera = new THREE.PerspectiveCamera(
   75,
   window.innerWidth / window.innerHeight,
@@ -49,7 +55,9 @@ pivot.add(yaw);
 yaw.add(pitch);
 pitch.add(camera);
 
-const renderer = new THREE.WebGLRenderer();
+// const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
@@ -164,9 +172,9 @@ gltfLoader.load(
                     console.log("animationActions: ", animationActions);
 
                     gltfLoader.load(
-                      "/models/joe@slowRun.glb",
+                      "/models/joe@fastRun.glb",
                       (gltf) => {
-                        console.log("loaded Joe slow run");
+                        console.log("loaded Joe fast running");
                         // gltf.animations[0].tracks.shift() //delete the specific track that moves the object up/down while jumping
                         let animationAction = mixer.clipAction(
                           gltf.animations[0],
@@ -308,11 +316,14 @@ colliderBody.addEventListener("collide", function (e: { contact: any }) {
   }
 });
 
-const planeGeometry = new THREE.PlaneGeometry(100, 100);
-const texture = new THREE.TextureLoader().load("/img/grid.png");
+const planeGeometry = new THREE.PlaneGeometry(200, 200);
+// const texture = new THREE.TextureLoader().load(
+//   "https://sbcode.net/img/grid.png",
+// );
 const plane = new THREE.Mesh(
   planeGeometry,
-  new THREE.MeshPhongMaterial({ map: texture }),
+  // new THREE.MeshPhongMaterial({ map: texture }),
+  new THREE.MeshStandardMaterial({ color: "white" }),
 );
 plane.rotateX(-Math.PI / 2);
 plane.receiveShadow = true;
@@ -333,11 +344,11 @@ const boxMeshes:
       THREE.MeshStandardMaterial,
       THREE.Object3DEventMap
     >[] = [];
-for (let i = 0; i < 25; i++) {
+for (let i = 0; i < 100; i++) {
   const halfExtents = new CANNON.Vec3(
-    Math.random() * 2,
-    Math.random() * 2,
-    Math.random() * 2,
+    Math.random() * 8,
+    Math.random() * 8,
+    Math.random() * 8,
   );
   const boxShape = new CANNON.Box(halfExtents);
   const boxGeometry = new THREE.BoxGeometry(
@@ -345,9 +356,9 @@ for (let i = 0; i < 25; i++) {
     halfExtents.y * 2,
     halfExtents.z * 2,
   );
-  const x = (Math.random() - 0.5) * 20;
-  const y = 2 + i * 2;
-  const z = (Math.random() - 0.5) * 20;
+  const x = Math.random() * 10;
+  const y = 100 + i * 20;
+  const z = 50 + Math.random() * 10;
   const boxBody = new CANNON.Body({ mass: 1, material: groundMaterial });
   boxBody.addShape(boxShape);
   const boxMesh = new THREE.Mesh(boxGeometry, new THREE.MeshStandardMaterial());
@@ -474,7 +485,16 @@ const onDocumentKey = (e: { code: string | number; type: string }) => {
     console.log("moveRight: ", moveRight);
     if (keyMap["Space"]) {
       if (canJump === true) {
-        colliderBody.velocity.y = 28;
+        colliderBody.velocity.y = 50;
+        // if (moveForward) {
+        //   colliderBody.velocity.z = 20;
+        // } else if (moveBackward) {
+        //   colliderBody.velocity.z = -20;
+        // } else if (moveLeft) {
+        //   colliderBody.velocity.x = 20;
+        // } else if (moveRight) {
+        //   colliderBody.velocity.x = -20;
+        // }
         setAction(animationActions[2], false);
       }
       canJump = false;
@@ -548,20 +568,24 @@ function animate() {
       inputVelocity.set(0, 0, 0);
 
       if (moveForward) {
-        inputVelocity.z = -1;
+        inputVelocity.z = -10;
       }
       if (moveBackward) {
-        inputVelocity.z = 1;
+        inputVelocity.z = 10;
       }
 
       if (moveLeft) {
-        inputVelocity.x = -1;
+        inputVelocity.x = -10;
       }
       if (moveRight) {
-        inputVelocity.x = 1;
+        inputVelocity.x = 10;
       }
 
-      inputVelocity.setLength(delta * 5); // 10
+      if (moveRun) {
+        inputVelocity.setLength(delta * 5); // 10
+      } else {
+        inputVelocity.setLength(delta * 5); // 10
+      }
 
       // apply camera rotation to inputVelocity
       euler.y = yaw.rotation.y;
