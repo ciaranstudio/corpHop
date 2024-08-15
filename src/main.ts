@@ -163,7 +163,8 @@ gltfLoader.load(
                         animationActions.push(animationAction);
                         //progressBar.style.display = 'none'
                         modelReady = true;
-                        setAction(animationActions[0], true);
+                        animationActions[0].play();
+                        // setAction(animationActions[0], true);
                         console.log("animationActions: ", animationActions);
                       },
                       (xhr) => {
