@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import Stats from "three/examples/jsm/libs/stats.module.js";
+// import Stats from "three/examples/jsm/libs/stats.module.js";
 import * as CANNON from "cannon-es";
 import { Mesh } from "three";
 
@@ -493,8 +493,8 @@ const v = new THREE.Vector3();
 const targetQuaternion = new THREE.Quaternion();
 let distance = 0;
 
-const stats = new Stats();
-document.body.appendChild(stats.dom);
+// const stats = new Stats();
+// document.body.appendChild(stats.dom);
 
 const clock = new THREE.Clock();
 let delta = 0;
@@ -593,7 +593,7 @@ function animate() {
 
   render();
 
-  stats.update();
+  // stats.update();
 }
 
 function render() {
