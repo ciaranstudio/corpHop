@@ -1,70 +1,68 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Corporate Hop</title>
-        <style>
-            body {
-                overflow: hidden;
-                margin: 0px;
-              
-            }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Corporate Hop</title>
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0px;
+      }
 
-            a {
-                color: #ffffff;
-            }
+      a {
+        color: #ffffff;
+      }
 
-            #progressBar {
-                width: 500px;
-                height: 24px;
-                position: absolute;
-                left: 50%;
-                top: 25px;
-                margin-left: -250px;
-                display: none;
-            }
+      #progressBar {
+        width: 500px;
+        height: 24px;
+        position: absolute;
+        left: 50%;
+        top: 25px;
+        margin-left: -250px;
+        display: none;
+      }
 
-            #instructions {
-                width: 80svw;
-                color: slate;
-                position: absolute;
-                left: 50%;
-                top: 10px;
-                margin-left: -220px;
-                font-family: 'Courier New', Courier, monospace; 
-            }
+      #instructions {
+        width: 80svw;
+        color: slate;
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        margin-left: -220px;
+        font-family: "Courier New", Courier, monospace;
+      }
 
-            #menuPanel {
-                position: absolute;
-                background-color: rgba(255, 255, 255, 0.5);
-                top: 0px;
-                left: 0px;
-                width: 100%;
-                height: 100%;             
-            }
+      #menuPanel {
+        position: absolute;
+        background-color: rgba(255, 255, 255, 0.5);
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
 
-            #startButton {
-                height: 50px;
-                width: 200px;
-                margin: -25px -100px;
-                position: relative;
-                top: 50%;
-                left: 50%;
-                font-size: 1.25rem;  
-                font-family: 'Courier New', Courier, monospace;                    
-            }
-        </style>
-    </head>
-    <body>
-        <progress value="0" max="100" id="progressBar"></progress>
-        <div id="instructions">
-            <p>WASD to move (Shift Left to run) and SPACE to jump</p>               
-        </div>
-        <div id="menuPanel">
-            <button id="startButton">start hopping</button>
-        </div>
+      #startButton {
+        height: 50px;
+        width: 200px;
+        margin: -25px -100px;
+        position: relative;
+        top: 50%;
+        left: 50%;
+        font-size: 1.25rem;
+        font-family: "Courier New", Courier, monospace;
+      }
+    </style>
+  </head>
   <body>
+    <progress value="0" max="100" id="progressBar"></progress>
+    <div id="instructions">
+      <p>WASD to move (Shift Left to run) and SPACE to jump</p>
+    </div>
+    <div id="menuPanel">
+      <button id="startButton">start hopping</button>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

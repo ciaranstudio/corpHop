@@ -277,10 +277,6 @@ const contactNormal = new CANNON.Vec3();
 const upAxis = new CANNON.Vec3(0, 1, 0);
 colliderBody.addEventListener("collide", function (e: { contact: any }) {
   const contact = e.contact;
-  // console.log("contact: ", contact);
-  // console.log("contactNormal: ", contactNormal);
-  // console.log("contactNormal.dot(upAxis): ", contactNormal.dot(upAxis));
-
   if (contact.bi.id == colliderBody.id) {
     console.log("negating - contact.ni.negate(contactNormal)");
     contact.ni.negate(contactNormal);
