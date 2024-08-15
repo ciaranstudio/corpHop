@@ -1,34 +1,21 @@
 import * as THREE from "three";
-// import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js'
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import Stats from "three/examples/jsm/libs/stats.module.js";
 import * as CANNON from "cannon-es";
 import { Mesh } from "three";
-// import CannonDebugRenderer from '/utils/cannonDebugRenderer.js'
 
 const scene = new THREE.Scene();
 
-const light1 = new THREE.SpotLight(0xffffff, 100);
-light1.position.set(2.5, 5, 2.5);
+const light1 = new THREE.SpotLight(0xffffff, 1500, 250);
+light1.position.set(0, 50, 0);
 light1.angle = Math.PI / 8;
 light1.penumbra = 0.5;
 light1.castShadow = true;
 light1.shadow.mapSize.width = 1024;
 light1.shadow.mapSize.height = 1024;
 light1.shadow.camera.near = 0.5;
-light1.shadow.camera.far = 20;
+light1.shadow.camera.far = 250;
 scene.add(light1);
-
-const light2 = new THREE.SpotLight(0xffffff, 100);
-light2.position.set(-2.5, 5, 2.5);
-light2.angle = Math.PI / 8;
-light2.penumbra = 0.5;
-light2.castShadow = true;
-light2.shadow.mapSize.width = 1024;
-light2.shadow.mapSize.height = 1024;
-light2.shadow.camera.near = 0.5;
-light2.shadow.camera.far = 20;
-scene.add(light2);
 
 const environmentTexture = new THREE.CubeTextureLoader()
   .setPath("https://sbcode.net/img/")
@@ -55,7 +42,6 @@ pivot.add(yaw);
 yaw.add(pitch);
 pitch.add(camera);
 
-// const renderer = new THREE.WebGLRenderer();
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -79,7 +65,7 @@ const slippery_ground_cm = new CANNON.ContactMaterial(
 );
 world.addContactMaterial(slippery_ground_cm);
 
-// Character Collider
+// character collider
 const characterCollider = new THREE.Object3D();
 characterCollider.position.y = 3;
 scene.add(characterCollider);
@@ -105,6 +91,7 @@ let lastAction: THREE.AnimationAction;
 
 const gltfLoader = new GLTFLoader();
 
+// load skinned character model
 gltfLoader.load(
   "/models/joe$@idle.glb",
   (gltf) => {
@@ -119,8 +106,6 @@ gltfLoader.load(
           const mat = (child as Mesh).material as THREE.MeshStandardMaterial;
           mat.transparent = false;
           mat.side = THREE.FrontSide;
-          mat.roughness = 1.0;
-          mat.metalness = 0.0;
         }
       }
     });
@@ -132,9 +117,8 @@ gltfLoader.load(
     scene.add(gltf.scene);
     modelMesh = gltf.scene;
     light1.target = modelMesh;
-    light2.target = modelMesh;
 
-    //add an animation from another file
+    // load unskinned character model animations
     gltfLoader.load(
       "/models/joe@walking.glb",
       (gltf) => {
@@ -146,17 +130,15 @@ gltfLoader.load(
           "/models/joe@jump.glb",
           (gltf) => {
             console.log("loaded Joe jumping");
-            // gltf.animations[0].tracks.shift() //delete the specific track that moves the object up/down while jumping
             let animationAction = mixer.clipAction(gltf.animations[0]);
             animationActions.push(animationAction);
-            //progressBar.style.display = 'none'
+            // progressBar.style.display = 'none'
             console.log("animationActions: ", animationActions);
 
             gltfLoader.load(
               "/models/joe@fallingLanding.glb",
               (gltf) => {
                 console.log("loaded Joe falling landing");
-                // gltf.animations[0].tracks.shift() //delete the specific track that moves the object up/down while jumping
                 let animationAction = mixer.clipAction(gltf.animations[0]);
                 animationActions.push(animationAction);
                 //progressBar.style.display = 'none'
@@ -165,7 +147,6 @@ gltfLoader.load(
                   "/models/joe@fallingIdle.glb",
                   (gltf) => {
                     console.log("loaded Joe falling idle");
-                    // gltf.animations[0].tracks.shift() //delete the specific track that moves the object up/down while jumping
                     let animationAction = mixer.clipAction(gltf.animations[0]);
                     animationActions.push(animationAction);
                     //progressBar.style.display = 'none'
@@ -175,7 +156,6 @@ gltfLoader.load(
                       "/models/joe@fastRun.glb",
                       (gltf) => {
                         console.log("loaded Joe fast running");
-                        // gltf.animations[0].tracks.shift() //delete the specific track that moves the object up/down while jumping
                         let animationAction = mixer.clipAction(
                           gltf.animations[0],
                         );
@@ -264,6 +244,7 @@ const setAction = (toAction: THREE.AnimationAction, loop: boolean) => {
     if (activeAction === animationActions[2]) {
       setAction(animationActions[4], true);
     } else if (activeAction === animationActions[3]) {
+      // setAction(animationActions[1], true);
       if (moveRun) {
         setAction(animationActions[5], true);
       } else {
@@ -306,23 +287,15 @@ colliderBody.addEventListener("collide", function (e: { contact: any }) {
   }
   if (contactNormal.dot(upAxis) > 0.5) {
     if (!canJump) {
-      moveForward = true;
-      setTimeout(() => {
-        moveForward = false;
-      }, 500);
       setAction(animationActions[3], false);
     }
     canJump = true;
   }
 });
 
-const planeGeometry = new THREE.PlaneGeometry(200, 200);
-// const texture = new THREE.TextureLoader().load(
-//   "https://sbcode.net/img/grid.png",
-// );
+const planeGeometry = new THREE.PlaneGeometry(250, 250);
 const plane = new THREE.Mesh(
   planeGeometry,
-  // new THREE.MeshPhongMaterial({ map: texture }),
   new THREE.MeshStandardMaterial({ color: "white" }),
 );
 plane.rotateX(-Math.PI / 2);
@@ -344,11 +317,11 @@ const boxMeshes:
       THREE.MeshStandardMaterial,
       THREE.Object3DEventMap
     >[] = [];
-for (let i = 0; i < 100; i++) {
+for (let i = 0; i < 150; i++) {
   const halfExtents = new CANNON.Vec3(
-    Math.random() * 8,
-    Math.random() * 8,
-    Math.random() * 8,
+    i < 100 ? Math.random() + 0.75 * 8 : Math.random() * 10,
+    i < 100 ? Math.random() + 0.5 * 8 : Math.random() * 12,
+    i < 100 ? Math.random() + 0.25 * 8 : Math.random() * 8,
   );
   const boxShape = new CANNON.Box(halfExtents);
   const boxGeometry = new THREE.BoxGeometry(
@@ -356,12 +329,15 @@ for (let i = 0; i < 100; i++) {
     halfExtents.y * 2,
     halfExtents.z * 2,
   );
-  const x = Math.random() * 10;
+  const x = i < 100 ? Math.random() * 10 : -50;
   const y = 100 + i * 20;
-  const z = 50 + Math.random() * 10;
+  const z = i < 100 ? 50 + Math.random() * 10 : 50;
   const boxBody = new CANNON.Body({ mass: 1, material: groundMaterial });
   boxBody.addShape(boxShape);
-  const boxMesh = new THREE.Mesh(boxGeometry, new THREE.MeshStandardMaterial());
+  const boxMesh = new THREE.Mesh(
+    boxGeometry,
+    new THREE.MeshStandardMaterial({ color: "lightGrey" }),
+  );
   world.addBody(boxBody);
   scene.add(boxMesh);
   boxBody.position.set(x, y, z);
@@ -486,15 +462,6 @@ const onDocumentKey = (e: { code: string | number; type: string }) => {
     if (keyMap["Space"]) {
       if (canJump === true) {
         colliderBody.velocity.y = 50;
-        // if (moveForward) {
-        //   colliderBody.velocity.z = 20;
-        // } else if (moveBackward) {
-        //   colliderBody.velocity.z = -20;
-        // } else if (moveLeft) {
-        //   colliderBody.velocity.x = 20;
-        // } else if (moveRight) {
-        //   colliderBody.velocity.x = -20;
-        // }
         setAction(animationActions[2], false);
       }
       canJump = false;
@@ -532,24 +499,24 @@ document.body.appendChild(stats.dom);
 const clock = new THREE.Clock();
 let delta = 0;
 
-//const cannonDebugRenderer = new CannonDebugRenderer(scene, world)
-
 function animate() {
   requestAnimationFrame(animate);
 
   if (modelReady) {
     if (canJump) {
-      if (activeAction === animationActions[0]) {
-        //idle
+      if (
+        activeAction === animationActions[0] ||
+        activeAction === animationActions[3]
+      ) {
+        // idle
         mixer.update(delta);
       } else {
-        //walking
+        // walking
         mixer.update(distance / 10);
       }
     } else {
-      //we are in the air
+      // mid-jump
       mixer.update(delta);
-      // }
     }
     const p = characterCollider.position;
     p.y -= 1;
@@ -601,8 +568,6 @@ function animate() {
 
   delta = Math.min(clock.getDelta(), 0.1);
   world.step(delta);
-
-  //cannonDebugRenderer.update()
 
   characterCollider.position.set(
     colliderBody.position.x,
