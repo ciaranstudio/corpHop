@@ -48,6 +48,8 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 document.body.appendChild(renderer.domElement);
 
+// const progressBar = <HTMLInputElement>document.getElementById("progressBar");
+
 const world = new CANNON.World();
 world.gravity.set(0, -9.82, 0);
 
