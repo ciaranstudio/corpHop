@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 // import Stats from "three/examples/jsm/libs/stats.module.js";
 import * as CANNON from "cannon-es";
 import { Mesh } from "three";
@@ -95,7 +96,7 @@ const gltfLoader = new GLTFLoader();
 
 // load skinned character model
 gltfLoader.load(
-  "/models/joe$@idle.glb",
+  "/models/joe$@idleUSE.glb",
   (gltf) => {
     gltf.scene.traverse(function (child) {
       if ((child as Mesh).isMesh) {
@@ -124,14 +125,14 @@ gltfLoader.load(
     gltfLoader.load(
       "/models/joe@walking.glb",
       (gltf) => {
-        console.log("loaded Joe walking");
+        // console.log("loaded Joe walking");
         let animationAction = mixer.clipAction(gltf.animations[0]);
         animationActions.push(animationAction);
 
         gltfLoader.load(
           "/models/joe@jump.glb",
           (gltf) => {
-            console.log("loaded Joe jumping");
+            // console.log("loaded Joe jumping");
             let animationAction = mixer.clipAction(gltf.animations[0]);
             animationActions.push(animationAction);
             // progressBar.style.display = 'none'
@@ -139,7 +140,7 @@ gltfLoader.load(
             gltfLoader.load(
               "/models/joe@fallingLanding.glb",
               (gltf) => {
-                console.log("loaded Joe falling landing");
+                // console.log("loaded Joe falling landing");
                 let animationAction = mixer.clipAction(gltf.animations[0]);
                 animationActions.push(animationAction);
                 //progressBar.style.display = 'none'
@@ -147,7 +148,7 @@ gltfLoader.load(
                 gltfLoader.load(
                   "/models/joe@fallingIdle.glb",
                   (gltf) => {
-                    console.log("loaded Joe falling idle");
+                    // console.log("loaded Joe falling idle");
                     let animationAction = mixer.clipAction(gltf.animations[0]);
                     animationActions.push(animationAction);
                     //progressBar.style.display = 'none'
@@ -156,7 +157,7 @@ gltfLoader.load(
                     gltfLoader.load(
                       "/models/joe@fastRun.glb",
                       (gltf) => {
-                        console.log("loaded Joe fast running");
+                        // console.log("loaded Joe fast running");
                         let animationAction = mixer.clipAction(
                           gltf.animations[0],
                         );
@@ -165,7 +166,7 @@ gltfLoader.load(
                         modelReady = true;
                         animationActions[0].play();
                         // setAction(animationActions[0], true);
-                        console.log("animationActions: ", animationActions);
+                        // console.log("animationActions: ", animationActions);
                       },
                       (xhr) => {
                         if (xhr.lengthComputable) {
@@ -278,7 +279,6 @@ const upAxis = new CANNON.Vec3(0, 1, 0);
 colliderBody.addEventListener("collide", function (e: { contact: any }) {
   const contact = e.contact;
   if (contact.bi.id == colliderBody.id) {
-    console.log("negating - contact.ni.negate(contactNormal)");
     contact.ni.negate(contactNormal);
   } else {
     contactNormal.copy(contact.ni);
@@ -447,16 +447,16 @@ const keyMap: IKeyMap = {
 
 const onDocumentKey = (e: { code: string | number; type: string }) => {
   keyMap[e.code as keyof IKeyMap] = e.type === "keydown";
-  console.log(e);
+  // console.log(e);
   if (pointerLocked) {
     moveForward = keyMap["KeyW"];
-    console.log("moveForward: ", moveForward);
+    // console.log("moveForward: ", moveForward);
     moveBackward = keyMap["KeyS"];
-    console.log("moveBackward: ", moveBackward);
+    // console.log("moveBackward: ", moveBackward);
     moveLeft = keyMap["KeyA"];
-    console.log("moveLeft: ", moveLeft);
+    // console.log("moveLeft: ", moveLeft);
     moveRight = keyMap["KeyD"];
-    console.log("moveRight: ", moveRight);
+    // console.log("moveRight: ", moveRight);
     if (keyMap["Space"]) {
       if (canJump === true) {
         colliderBody.velocity.y = 50;
